@@ -145,6 +145,21 @@ export default function Map() {
       })()
     })
 
+    map.on('load', () => {
+      console.log('map loaded')
+      map.addSource('raster-tile-examples', {
+        type: 'raster',
+        tiles: ['/api/tiles/{z}/{x}/{y}.png'],
+        tileSize: 256,
+      })
+
+      map.addLayer({
+        id: 'raster-tile-examples-layer',
+        type: 'raster',
+        source: 'raster-tile-examples',
+      })
+    })
+
     return () => {
       cancelled = true
       map.remove()

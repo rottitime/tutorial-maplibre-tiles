@@ -8,6 +8,11 @@ import maplibregl, {
 } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
+/** OpenMapTiles-compatible basemap (OpenFreeMap). Toggle off to use local beige style only. */
+const ENABLE_OPEN_MAP_TILES = true
+
+const OPEN_MAP_TILES_STYLE = 'https://tiles.openfreemap.org/styles/liberty'
+
 const RHODE_ISLAND_CENTER: [number, number] = [-71.4774, 41.5801]
 
 /** One real building from the dataset so the map paints immediately. */
@@ -74,6 +79,61 @@ function createLocalStyle(): StyleSpecification {
   }
 }
 
+function ensureBuildingGeoJsonLayers(map: maplibregl.Map) {
+  if (map.getSource('rhode-island-buildings')) return
+
+  map.addSource('rhode-island-buildings', {
+    type: 'geojson',
+    data: SAMPLE_BUILDING,
+  })
+
+  map.addLayer({
+    id: 'rhode-island-buildings-fill',
+    type: 'fill',
+    source: 'rhode-island-buildings',
+    paint: {
+      'fill-color': '#c45c26',
+      'fill-opacity': 0.85,
+    },
+  })
+
+  map.addLayer({
+    id: 'rhode-island-buildings-outline',
+    type: 'line',
+    source: 'rhode-island-buildings',
+    paint: {
+      'line-color': '#5c2a0a',
+      'line-width': 0.4,
+      'line-opacity': 0.5,
+    },
+  })
+}
+
+function addRasterBuildingTiles(map: maplibregl.Map) {
+  if (map.getSource('raster-tile-examples')) return
+
+  map.addSource('raster-tile-examples', {
+    type: 'raster',
+    tiles: ['/tiles/{z}/{x}/{y}.webp'],
+    tileSize: 256,
+    minzoom: 8,
+    maxzoom: 14,
+  })
+
+  const beforeId = map
+    .getStyle()
+    .layers?.find((layer) => layer.type === 'symbol')?.id
+
+  map.addLayer(
+    {
+      id: 'raster-tile-examples-layer',
+      type: 'raster',
+      source: 'raster-tile-examples',
+    },
+    beforeId,
+  )
+}
+
 export default function Map() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [status, setStatus] = useState('Starting map…')
@@ -86,10 +146,12 @@ export default function Map() {
 
     const map = new maplibregl.Map({
       container,
-      style: createLocalStyle(),
+      style: ENABLE_OPEN_MAP_TILES
+        ? OPEN_MAP_TILES_STYLE
+        : createLocalStyle(),
       center: [-71.1173, 41.5001],
       zoom: 18,
-      attributionControl: false,
+      attributionControl: ENABLE_OPEN_MAP_TILES,
     })
 
     map.addControl(new maplibregl.NavigationControl(), 'top-right')
@@ -102,7 +164,14 @@ export default function Map() {
     map.once('load', () => {
       if (cancelled) return
 
-      setStatus('Sample building loaded — fetching full 105 MB GeoJSON…')
+      addRasterBuildingTiles(map)
+      ensureBuildingGeoJsonLayers(map)
+
+      setStatus(
+        ENABLE_OPEN_MAP_TILES
+          ? 'Open map tiles on — fetching full 105 MB GeoJSON…'
+          : 'Sample building loaded — fetching full 105 MB GeoJSON…',
+      )
 
       void (async () => {
         try {
@@ -132,7 +201,9 @@ export default function Map() {
 
           map.jumpTo({ center: RHODE_ISLAND_CENTER, zoom: 9 })
           setStatus(
-            `${count.toLocaleString()} buildings — orange fills on beige (no basemap)`,
+            ENABLE_OPEN_MAP_TILES
+              ? `${count.toLocaleString()} buildings + open map tiles basemap`
+              : `${count.toLocaleString()} buildings — orange fills on beige (no basemap)`,
           )
         } catch (error) {
           if (!cancelled) {
@@ -143,24 +214,6 @@ export default function Map() {
           }
         }
       })()
-    })
-
-    map.on('load', () => {
-      console.log('map loaded')
-      map.addSource('raster-tile-examples', {
-        type: 'raster',
-        tiles: ['/tiles/{z}/{x}/{y}.webp'],
-        // tiles: ['/tiles-png/{z}/{x}/{y}.png'],
-        tileSize: 256,
-        minzoom: 8,
-        maxzoom: 14,
-      })
-
-      map.addLayer({
-        id: 'raster-tile-examples-layer',
-        type: 'raster',
-        source: 'raster-tile-examples',
-      })
     })
 
     return () => {

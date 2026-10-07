@@ -150,6 +150,7 @@ export default function Map() {
       map.addSource('raster-tile-examples', {
         type: 'raster',
         tiles: ['/tiles/{z}/{x}/{y}.webp'],
+        // tiles: ['/tiles-png/{z}/{x}/{y}.png'],
         tileSize: 256,
         minzoom: 8,
         maxzoom: 14,

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
-    <title>buildings.tif</title>
+    <title>buildings-rgba.tif</title>
 
     <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@0.7.5/dist/leaflet.css" />
@@ -50,7 +50,7 @@ var cartodb = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{
 var white = L.tileLayer("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEAAQMAAABmvDolAAAAA1BMVEX///+nxBvIAAAAH0lEQVQYGe3BAQ0AAADCIPunfg43YAAAAAAAAAAA5wIhAAAB9aK9BAAAAABJRU5ErkJggg==", {minZoom: 8, maxZoom: 14});
 
 // Overlay layers (TMS)
-var lyr = L.tileLayer('./{z}/{x}/{y}.webp', {tms: 1, opacity: 0.7, attribution: "", minZoom: 8, maxZoom: 14});
+var lyr = L.tileLayer('./{z}/{x}/{y}.webp', {tms: 0, opacity: 0.7, attribution: "", minZoom: 8, maxZoom: 14});
 
 // Map
 var map = L.map('map', {
@@ -72,7 +72,7 @@ title.onAdd = function(map) {
     return this._div;
 };
 title.update = function(props) {
-    this._div.innerHTML = "buildings.tif";
+    this._div.innerHTML = "buildings-rgba.tif";
 };
 title.addTo(map);
 

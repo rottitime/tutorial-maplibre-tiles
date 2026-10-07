@@ -113,6 +113,8 @@ function ensureBuildingGeoJsonLayers(map: maplibregl.Map) {
 function addRasterBuildingTiles(map: maplibregl.Map) {
   if (map.getSource('raster-tile-examples')) return
 
+  //buildings
+
   map.addSource('raster-tile-examples', {
     type: 'raster',
     tiles: ['/tiles/{z}/{x}/{y}.webp'],
@@ -121,15 +123,30 @@ function addRasterBuildingTiles(map: maplibregl.Map) {
     maxzoom: 14,
   })
 
+  map.addLayer(
+    {
+      id: 'raster-tile-examples-layer',
+      type: 'raster',
+      source: 'raster-tile-examples',
+    },
+    map.getStyle().layers?.find((layer) => layer.type === 'symbol')?.id,
+  )
+
+  map.addSource('land-tile', {
+    type: 'raster',
+    tiles: ['/land/{z}/{x}/{y}.webp'],
+    tileSize: 256,
+  })
+
   const beforeId = map
     .getStyle()
     .layers?.find((layer) => layer.type === 'symbol')?.id
 
   map.addLayer(
     {
-      id: 'raster-tile-examples-layer',
+      id: 'land-tile-layer',
       type: 'raster',
-      source: 'raster-tile-examples',
+      source: 'land-tile',
     },
     beforeId,
   )

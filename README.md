@@ -38,3 +38,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 # Data references
 
 Rhode Island (105.21 MiB) taken from https://github.com/microsoft/USBuildingFootprints.
+World Land Format: Shapefile, Projection: WGS84 (Large polygons are split, use for larger scales) https://osmdata.openstreetmap.de/data/land-polygons.html

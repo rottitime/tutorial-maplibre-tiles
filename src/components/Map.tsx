@@ -149,8 +149,10 @@ export default function Map() {
       console.log('map loaded')
       map.addSource('raster-tile-examples', {
         type: 'raster',
-        tiles: ['/api/tiles/{z}/{x}/{y}.png'],
+        tiles: ['/tiles/{z}/{x}/{y}.webp'],
         tileSize: 256,
+        minzoom: 8,
+        maxzoom: 14,
       })
 
       map.addLayer({

@@ -7,6 +7,7 @@ import maplibregl, {
   type StyleSpecification,
 } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
+import { addBoundsBox } from '@/lib/addBoundsBox'
 
 /** OpenMapTiles-compatible basemap (OpenFreeMap). Toggle off to use local beige style only. */
 const ENABLE_OPEN_MAP_TILES = true
@@ -166,6 +167,7 @@ export default function Map() {
 
       addRasterBuildingTiles(map)
       ensureBuildingGeoJsonLayers(map)
+      addBoundsBox(map)
 
       setStatus(
         ENABLE_OPEN_MAP_TILES

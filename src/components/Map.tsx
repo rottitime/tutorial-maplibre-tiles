@@ -10,7 +10,7 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import { addBoundsBox } from '@/lib/addBoundsBox'
 
 /** OpenMapTiles-compatible basemap (OpenFreeMap). Toggle off to use local beige style only. */
-const ENABLE_OPEN_MAP_TILES = true
+const ENABLE_OPEN_MAP_TILES = false
 
 const OPEN_MAP_TILES_STYLE = 'https://tiles.openfreemap.org/styles/liberty'
 
@@ -147,9 +147,7 @@ export default function Map() {
 
     const map = new maplibregl.Map({
       container,
-      style: ENABLE_OPEN_MAP_TILES
-        ? OPEN_MAP_TILES_STYLE
-        : createLocalStyle(),
+      style: ENABLE_OPEN_MAP_TILES ? OPEN_MAP_TILES_STYLE : createLocalStyle(),
       center: [-71.1173, 41.5001],
       zoom: 18,
       attributionControl: ENABLE_OPEN_MAP_TILES,

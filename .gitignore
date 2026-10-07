@@ -42,3 +42,4 @@ next-env.d.ts
 
 #data
 /src/data/raw
+/data/gdal/buildings.tif

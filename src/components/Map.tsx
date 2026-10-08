@@ -89,7 +89,25 @@ function createLocalStyle(): StyleSpecification {
 function addRasterBuildingTiles(map: maplibregl.Map) {
   if (map.getSource('raster-tile-examples')) return
 
-  //buildings
+  const beforeId = map
+    .getStyle()
+    .layers?.find((layer) => layer.type === 'symbol')?.id
+
+  // Land under buildings.
+  map.addSource('land-tile', {
+    type: 'raster',
+    tiles: ['/land/{z}/{x}/{y}.webp'],
+    tileSize: 256,
+  })
+
+  map.addLayer(
+    {
+      id: 'land-tile-layer',
+      type: 'raster',
+      source: 'land-tile',
+    },
+    beforeId,
+  )
 
   map.addSource('raster-tile-examples', {
     type: 'raster',
@@ -104,25 +122,6 @@ function addRasterBuildingTiles(map: maplibregl.Map) {
       id: 'raster-tile-examples-layer',
       type: 'raster',
       source: 'raster-tile-examples',
-    },
-    map.getStyle().layers?.find((layer) => layer.type === 'symbol')?.id,
-  )
-
-  map.addSource('land-tile', {
-    type: 'raster',
-    tiles: ['/land/{z}/{x}/{y}.webp'],
-    tileSize: 256,
-  })
-
-  const beforeId = map
-    .getStyle()
-    .layers?.find((layer) => layer.type === 'symbol')?.id
-
-  map.addLayer(
-    {
-      id: 'land-tile-layer',
-      type: 'raster',
-      source: 'land-tile',
     },
     beforeId,
   )
@@ -158,15 +157,15 @@ export default function Map() {
     map.once('load', () => {
       if (cancelled) return
 
+      // Bottom → top: gebco → land → buildings → places / bounds
+      if (SETTINGS.ENABLE_BUILDINGS_PMTILES) {
+        addRasterBuildingTiles(map)
+      }
       if (SETTINGS.ENABLE_GEBCO_PMTILES) {
         addGebcoPmtiles(map)
       }
       if (SETTINGS.ENABLE_PLACES_PMTILES) {
         addPlacesPmtiles(map)
-      }
-
-      if (SETTINGS.ENABLE_BUILDINGS_PMTILES) {
-        addRasterBuildingTiles(map)
       }
       addBoundsBox(map)
 

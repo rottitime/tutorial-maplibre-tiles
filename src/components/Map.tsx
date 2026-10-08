@@ -11,8 +11,12 @@ import { addBoundsBox } from '@/lib/addBoundsBox'
 import { addGebcoPmtiles } from '@/lib/addGebcoPmtiles'
 import { addPlacesPmtiles } from '@/lib/addPlacesPmtiles'
 
-/** OpenMapTiles-compatible basemap (OpenFreeMap). Toggle off to use local beige style only. */
-const ENABLE_OPEN_MAP_TILES = false
+const SETTINGS = {
+  ENABLE_OPEN_MAP_TILES: false,
+  ENABLE_BUILDINGS_PMTILES: true,
+  ENABLE_GEBCO_PMTILES: true,
+  ENABLE_PLACES_PMTILES: true,
+} as const
 
 const OPEN_MAP_TILES_STYLE = 'https://tiles.openfreemap.org/styles/liberty'
 
@@ -82,36 +86,6 @@ function createLocalStyle(): StyleSpecification {
   }
 }
 
-function ensureBuildingGeoJsonLayers(map: maplibregl.Map) {
-  if (map.getSource('rhode-island-buildings')) return
-
-  map.addSource('rhode-island-buildings', {
-    type: 'geojson',
-    data: SAMPLE_BUILDING,
-  })
-
-  map.addLayer({
-    id: 'rhode-island-buildings-fill',
-    type: 'fill',
-    source: 'rhode-island-buildings',
-    paint: {
-      'fill-color': '#c45c26',
-      'fill-opacity': 0.85,
-    },
-  })
-
-  map.addLayer({
-    id: 'rhode-island-buildings-outline',
-    type: 'line',
-    source: 'rhode-island-buildings',
-    paint: {
-      'line-color': '#5c2a0a',
-      'line-width': 0.4,
-      'line-opacity': 0.5,
-    },
-  })
-}
-
 function addRasterBuildingTiles(map: maplibregl.Map) {
   if (map.getSource('raster-tile-examples')) return
 
@@ -166,10 +140,12 @@ export default function Map() {
 
     const map = new maplibregl.Map({
       container,
-      style: ENABLE_OPEN_MAP_TILES ? OPEN_MAP_TILES_STYLE : createLocalStyle(),
+      style: SETTINGS.ENABLE_OPEN_MAP_TILES
+        ? OPEN_MAP_TILES_STYLE
+        : createLocalStyle(),
       center: [-71.1173, 41.5001],
       zoom: 18,
-      attributionControl: ENABLE_OPEN_MAP_TILES,
+      attributionControl: SETTINGS.ENABLE_OPEN_MAP_TILES,
     })
 
     map.addControl(new maplibregl.NavigationControl(), 'top-right')
@@ -182,14 +158,20 @@ export default function Map() {
     map.once('load', () => {
       if (cancelled) return
 
-      addRasterBuildingTiles(map)
-      addGebcoPmtiles(map)
-      ensureBuildingGeoJsonLayers(map)
+      if (SETTINGS.ENABLE_GEBCO_PMTILES) {
+        addGebcoPmtiles(map)
+      }
+      if (SETTINGS.ENABLE_PLACES_PMTILES) {
+        addPlacesPmtiles(map)
+      }
+
+      if (SETTINGS.ENABLE_BUILDINGS_PMTILES) {
+        addRasterBuildingTiles(map)
+      }
       addBoundsBox(map)
-      addPlacesPmtiles(map)
 
       setStatus(
-        ENABLE_OPEN_MAP_TILES
+        SETTINGS.ENABLE_OPEN_MAP_TILES
           ? 'Open map tiles on — fetching full 105 MB GeoJSON…'
           : 'Sample building loaded — fetching full 105 MB GeoJSON…',
       )
@@ -222,7 +204,7 @@ export default function Map() {
 
           map.jumpTo({ center: RHODE_ISLAND_CENTER, zoom: 9 })
           setStatus(
-            ENABLE_OPEN_MAP_TILES
+            SETTINGS.ENABLE_OPEN_MAP_TILES
               ? `${count.toLocaleString()} buildings + open map tiles basemap`
               : `${count.toLocaleString()} buildings — orange fills on beige (no basemap)`,
           )

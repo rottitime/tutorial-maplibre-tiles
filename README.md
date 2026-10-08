@@ -42,3 +42,6 @@ World Land Format: Shapefile (1.92GB), Projection: WGS84 (Large polygons are spl
 
 Place names
 https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_10m_populated_places.geojson
+
+GEBCO_2026 Grid (sub-ice topo/bathy) bathymetry
+https://www.gebco.net/data-products/gridded-bathymetry-data?utm_source=chatgpt.com#toc-find-out-more

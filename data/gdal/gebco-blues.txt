@@ -1,0 +1,13 @@
+# GEBCO elevation (m relative to sea level) → blue bathymetry
+# Negative = ocean depth. Land (>=0) and nodata → transparent.
+nv      0   0   0   0
+-11000  5  25  70 255
+-6000   8  40 100 255
+-3000  15  65 135 255
+-1500  25  95 165 255
+-500   45 125 190 255
+-100   80 160 215 255
+-20   130 195 235 255
+-1    170 220 245 255
+0       0   0   0   0
+9000    0   0   0   0

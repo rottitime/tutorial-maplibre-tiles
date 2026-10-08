@@ -37,11 +37,9 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 # Data references
 
-Rhode Island (105.21 MiB) taken from https://github.com/microsoft/USBuildingFootprints.
-World Land Format: Shapefile (1.92GB), Projection: WGS84 (Large polygons are split, use for larger scales) https://osmdata.openstreetmap.de/data/land-polygons.html
-
-Place names
-https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_10m_populated_places.geojson
-
-GEBCO_2026 Grid (sub-ice topo/bathy) bathymetry
-https://www.gebco.net/data-products/gridded-bathymetry-data?utm_source=chatgpt.com#toc-find-out-more
+| Dataset | Source | Original | Optimised (served) |
+| --- | --- | --- | --- |
+| Rhode Island buildings | [USBuildingFootprints](https://github.com/microsoft/USBuildingFootprints) | ~105 MB GeoJSON | ~5.5 MB WebP tiles (`public/tiles`) |
+| World land polygons | [OSM land polygons](https://osmdata.openstreetmap.de/data/land-polygons.html) (WGS84, split; shapefile ~1.9 GB) | ~1.9 GB GeoJSON | ~163 MB WebP tiles (`public/land`) |
+| Place names | [Natural Earth populated places](https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_10m_populated_places.geojson) | ~18 MB GeoJSON | ~25 MB PMTiles (`public/places/places.pmtiles`) |
+| GEBCO bathymetry | [GEBCO_2026 Grid (sub-ice topo/bathy)](https://www.gebco.net/data-products/gridded-bathymetry-data#toc-find-out-more) | ~7.0 GB GeoTIFF (8 tiles) | ~43 MB PMTiles z0–5 (`public/gebco/gebco.pmtiles`) |

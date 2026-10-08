@@ -8,6 +8,7 @@ import maplibregl, {
 } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { addBoundsBox } from '@/lib/addBoundsBox'
+import { addGebcoPmtiles } from '@/lib/addGebcoPmtiles'
 import { addPlacesPmtiles } from '@/lib/addPlacesPmtiles'
 
 /** OpenMapTiles-compatible basemap (OpenFreeMap). Toggle off to use local beige style only. */
@@ -182,6 +183,7 @@ export default function Map() {
       if (cancelled) return
 
       addRasterBuildingTiles(map)
+      addGebcoPmtiles(map)
       ensureBuildingGeoJsonLayers(map)
       addBoundsBox(map)
       addPlacesPmtiles(map)

@@ -1,14 +1,5 @@
-import maplibregl, { type Map } from 'maplibre-gl'
-import { Protocol } from 'pmtiles'
-
-let protocolRegistered = false
-
-function ensurePmtilesProtocol() {
-  if (protocolRegistered) return
-  const protocol = new Protocol()
-  maplibregl.addProtocol('pmtiles', protocol.tile)
-  protocolRegistered = true
-}
+import type { Map } from 'maplibre-gl'
+import { ensurePmtilesProtocol } from '@/lib/pmtilesProtocol'
 
 /** Natural Earth populated places (tippecanoe → public/places/places.pmtiles). */
 export function addPlacesPmtiles(map: Map) {
